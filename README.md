@@ -2,6 +2,9 @@
 
 A full-stack, role-based web application for managing academic examinations, examiner slot allocations, student bookings, rubric-driven assessments, and asynchronous background jobs.
 
+* **Live Production URL**: [https://emp-portal-v2.vercel.app](https://emp-portal-v2.vercel.app)
+* **GitHub Repository**: [https://github.com/arjitjaiswal08-art/Examination-Management-Portal](https://github.com/arjitjaiswal08-art/Examination-Management-Portal)
+
 ---
 
 ## 🛠 Frameworks & Tech Stack
