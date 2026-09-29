@@ -1,0 +1,3 @@
+Student ID,Student Name,Roll Number,Examination Name,Course Code,Course Name,Examination Date,Slot Time,Examiner Name,Marks Obtained,Maximum Marks,Booking Status,Remarks
+4,Aarav Mehta,21BSCS001,MAD-2 Viva & Project Demo,CS202,Modern Application Development - II,2026-10-01,10:00 - 10:30,Prof. Ram Sharma,Pending / Unpublished,100.0,Booked,N/A
+4,Aarav Mehta,21BSCS001,DBMS Midterm Viva,CS303,Database Management Systems,2026-09-17,11:00 - 11:30,Dr. Anita Verma,44.0,50.0,Completed,Excellent clarity on normalization and indexing. Good explanation of isolation levels.

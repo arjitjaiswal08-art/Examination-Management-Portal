@@ -1,0 +1,15 @@
+{
+  "name": "examination-management-portal-frontend",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Frontend UI for Examination Management Portal (Vue 3 + Bootstrap 5.3)",
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

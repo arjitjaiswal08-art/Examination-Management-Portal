@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examination Management Portal (EMP - V2)</title>
+  <meta name="description" content="Role-based Examination Management Portal for Administrators, Examiners, and Students">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#2563eb">
+
+  <!-- Bootstrap 5.3 CSS (Mandatory: No other CSS framework) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Custom Styling Enhancements -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Chart.js for Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <!-- Vue 3 Global Build -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.38/dist/vue.global.prod.js"></script>
+  <!-- Bootstrap 5.3 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+  <div id="app" class="d-flex flex-column min-vh-100">
+    <!-- Navbar Component -->
+    <navbar 
+      :current-user="currentUser" 
+      :notifications="notifications" 
+      :unread-count="unreadCount" 
+      :can-install="canInstall"
+      @logout="handleLogout"
+      @open-profile="showProfileModal = true"
+      @open-login="openLogin"
+      @open-register="openRegister"
+      @open-search="showSearchModal = true"
+      @refresh-notifications="fetchNotifications"
+      @install-app="installApp">
+    </navbar>
+
+    <!-- Main Application Container -->
+    <main class="main-content container-fluid px-3 px-lg-4 py-4">
+      <!-- 1. LANDING HERO (When No User is Logged In) -->
+      <div v-if="!currentUser" class="py-5">
+        <div class="row align-items-center justify-content-center">
+          <div class="col-lg-10 text-center">
+            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold mb-3">
+              <i class="bi bi-mortarboard me-1"></i> Examination Management Portal &bull; V2
+            </span>
+            <h1 class="display-5 fw-bold text-dark mb-3">
+              Seamless Examination Scheduling, Slot Booking & Rubric Evaluation
+            </h1>
+            <p class="lead text-muted mx-auto mb-4" style="max-width: 780px;">
+              A unified platform for academic administrators, examiners, and students. Streamlining timelines, examiner availability, slot allocation, rubric-driven assessments, and asynchronous background jobs.
+            </p>
+            <div class="d-flex justify-content-center gap-3 mb-5">
+              <button class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm" @click="openLogin">
+                <i class="bi bi-box-arrow-in-right me-2"></i> Sign In to Portal
+              </button>
+              <button class="btn btn-outline-primary btn-lg px-4 fw-semibold" @click="openRegister">
+                <i class="bi bi-person-plus me-2"></i> Register as Student
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Role Highlights Cards -->
+        <div class="row g-4 mt-2">
+          <!-- Administrator Role Card -->
+          <div class="col-md-4">
+            <div class="card h-100 p-4 border-0 shadow-sm border-top border-4 border-danger">
+              <div class="d-flex align-items-center mb-3">
+                <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-3 me-3">
+                  <i class="bi bi-shield-shaded fs-3"></i>
+                </div>
+                <h5 class="fw-bold mb-0 text-dark">Administrator</h5>
+              </div>
+              <p class="text-muted small">
+                Pre-existing superuser with centralized control over curriculum courses, examinations, rubric criteria, examiner provisioning, scheduling timelines, and result publication.
+              </p>
+              <ul class="list-unstyled small text-secondary mt-auto mb-3">
+                <li><i class="bi bi-check2 text-danger me-2"></i>Course & Exam Management</li>
+                <li><i class="bi bi-check2 text-danger me-2"></i>Rubric Setup & Weightage</li>
+                <li><i class="bi bi-check2 text-danger me-2"></i>Slot Rescheduling & Overrides</li>
+                <li><i class="bi bi-check2 text-danger me-2"></i>Monthly Analytics & Reports</li>
+              </ul>
+              <button class="btn btn-outline-danger btn-sm w-100" @click="openLogin">Sign In as Admin</button>
+            </div>
+          </div>
+
+          <!-- Examiner Role Card -->
+          <div class="col-md-4">
+            <div class="card h-100 p-4 border-0 shadow-sm border-top border-4 border-success">
+              <div class="d-flex align-items-center mb-3">
+                <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 me-3">
+                  <i class="bi bi-person-badge-fill fs-3"></i>
+                </div>
+                <h5 class="fw-bold mb-0 text-dark">Examiner</h5>
+              </div>
+              <p class="text-muted small">
+                Faculty members provisioned by the Administrator. Create and publish examination slots during creation windows, view booked student rosters, and assess candidates against rubrics.
+              </p>
+              <ul class="list-unstyled small text-secondary mt-auto mb-3">
+                <li><i class="bi bi-check2 text-success me-2"></i>Slot Creation & Capacity Controls</li>
+                <li><i class="bi bi-check2 text-success me-2"></i>View Booked Student Rosters</li>
+                <li><i class="bi bi-check2 text-success me-2"></i>Rubric Criterion Scoring</li>
+                <li><i class="bi bi-check2 text-success me-2"></i>Marks & Feedback Submission</li>
+              </ul>
+              <button class="btn btn-outline-success btn-sm w-100" @click="openLogin">Sign In as Examiner</button>
+            </div>
+          </div>
+
+          <!-- Student Role Card -->
+          <div class="col-md-4">
+            <div class="card h-100 p-4 border-0 shadow-sm border-top border-4 border-primary">
+              <div class="d-flex align-items-center mb-3">
+                <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3 me-3">
+                  <i class="bi bi-mortarboard-fill fs-3"></i>
+                </div>
+                <h5 class="fw-bold mb-0 text-dark">Student</h5>
+              </div>
+              <p class="text-muted small">
+                Self-register and search available examinations. Book slots with real-time capacity validation, receive automatic reminders, view published marks and download official scorecards.
+              </p>
+              <ul class="list-unstyled small text-secondary mt-auto mb-3">
+                <li><i class="bi bi-check2 text-primary me-2"></i>Self Registration & Profile</li>
+                <li><i class="bi bi-check2 text-primary me-2"></i>Search & Filter Examinations</li>
+                <li><i class="bi bi-check2 text-primary me-2"></i>Slot Booking & Cancellation</li>
+                <li><i class="bi bi-check2 text-primary me-2"></i>Async CSV Export & Scorecards</li>
+              </ul>
+              <button class="btn btn-outline-primary btn-sm w-100" @click="openRegister">Register as Student</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. ROLE-BASED DASHBOARDS (When Logged In) -->
+      <div v-else>
+        <!-- Administrator Dashboard -->
+        <admin-dashboard 
+          v-if="currentUser.role === 'admin'" 
+          :current-user="currentUser">
+        </admin-dashboard>
+
+        <!-- Examiner Dashboard -->
+        <examiner-dashboard 
+          v-else-if="currentUser.role === 'examiner'" 
+          :current-user="currentUser">
+        </examiner-dashboard>
+
+        <!-- Student Dashboard -->
+        <student-dashboard 
+          v-else-if="currentUser.role === 'student'" 
+          :current-user="currentUser">
+        </student-dashboard>
+      </div>
+    </main>
+
+    <!-- Global Modals -->
+    <auth-modal 
+      :show="showAuthModal" 
+      :initial-tab="authModalTab"
+      @close="showAuthModal = false"
+      @auth-success="handleAuthSuccess">
+    </auth-modal>
+
+    <profile-modal 
+      :show="showProfileModal" 
+      :current-user="currentUser"
+      @close="showProfileModal = false"
+      @profile-updated="handleProfileUpdated">
+    </profile-modal>
+
+    <global-search 
+      :show="showSearchModal" 
+      @close="showSearchModal = false">
+    </global-search>
+
+    <!-- Footer -->
+    <footer class="py-3 mt-auto">
+      <div class="container-fluid px-4 d-flex flex-wrap justify-content-between align-items-center">
+        <span class="text-muted small">
+          &copy; 2026 Examination Management Portal &bull; Flask + VueJS + Bootstrap + Redis + Celery
+        </span>
+        <div class="d-flex align-items-center gap-3">
+          <span class="badge bg-light text-secondary border small">SQLite DB</span>
+          <span class="badge bg-light text-secondary border small">Redis Cache</span>
+          <span class="badge bg-light text-secondary border small">Celery Workers</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Load Components and Vue App Script -->
+  <script src="/js/api.js?v=3"></script>
+  <script src="/js/components/Navbar.js?v=3"></script>
+  <script src="/js/components/AuthModal.js?v=3"></script>
+  <script src="/js/components/ProfileModal.js?v=3"></script>
+  <script src="/js/components/GlobalSearch.js?v=3"></script>
+  <script src="/js/components/AdminDashboard.js?v=3"></script>
+  <script src="/js/components/ExaminerDashboard.js?v=3"></script>
+  <script src="/js/components/StudentDashboard.js?v=3"></script>
+  <script src="/js/app.js?v=3"></script>
+</body>
+</html>
